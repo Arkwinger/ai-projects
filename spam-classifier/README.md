@@ -12,13 +12,13 @@ The model is trained, optimized, evaluated, and saved for reuse.
 
 ##  Features
 
-- Full text preprocessing pipeline  
-- Lowercasing, punctuation removal, stopword removal, stemming  
-- Bag-of-Words feature extraction (unigrams + bigrams)  
-- Multinomial Naive Bayes classifier  
-- Hyperparameter tuning with GridSearchCV  
-- Model saved with joblib  
-- Predicts new messages with probability scores  
+- Removes duplicate messages  
+- Full custom text preprocessing 
+- CountVectorizer with unigrams + bigrams  
+- Multinomial Naive Bayes classifier    
+- Hyperparameter tuning (GridSearchCV, 5-fold CV)  
+- Predicts new messages with probability scores
+- Achieved 91% accuracy on the evaluation server
 
 ---
 
@@ -27,48 +27,52 @@ The model is trained, optimized, evaluated, and saved for reuse.
 
 spam-classifier/
 │
-├── Spam.ipynb # Jupyter Notebook (full workflow)
-├── spam_model.joblib # Saved trained ML model
-├── README.md # Project documentation
-└── requirements.txt # (optional) dependencies
+├── Spam.ipynb / spam_classifier_v2.ipynb   # Full Jupyter workflow
+├── spam_model.joblib                        # Saved trained model
+├── sms_spam_collection/                     # Dataset folder
+│   └── SMSSpamCollection
+├── README.md                                # Project documentation
 
 
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
-### **1. Preprocessing Steps**
-
-- Convert text to lowercase  
-- Remove unwanted punctuation/numbers  
-- Tokenize into words  
-- Remove stopwords  
-- Apply stemming  
-- Convert tokens back to a cleaned string  
-
-Example:
+### **1. Load Dataset & Remove Duplicates**
 
 ```python
-message = message.lower()
-message = re.sub(r"[^a-z\s$!]", "", message)
-tokens = word_tokenize(message)
-tokens = [word for word in tokens if word not in stop_words]
-tokens = [stemmer.stem(word) for word in tokens]
-cleaned_message = " ".join(tokens)
+df = pd.read_csv(
+    "sms_spam_collection/SMSSpamCollection",
+    sep="\t",
+    header=None,
+    names=["label", "message"],
+    encoding="latin-1"
+)
+
+df = df.drop_duplicates()
 ```
 
-2. Feature Extraction (Bag-of-Words)
+2. Text Preprocessing
 
-Using CountVectorizer:
+Performed manually using NLTK:
 
+ - Lowercase conversion
+ - Regex cleaning
+ - Word tokenization
+ - Stopword removal
+ - Stemming
+   
 ```python
-vectorizer = CountVectorizer(
-    min_df=1,
-    max_df=0.9,
-    ngram_range=(1, 2)
-)
-X = vectorizer.fit_transform(df["message"])
+def preprocess(msg):
+    msg = msg.lower()
+    msg = re.sub(r"[^a-z\s$!]", "", msg)
+    tokens = word_tokenize(msg)
+    tokens = [w for w in tokens if w not in stop_words]
+    tokens = [stemmer.stem(w) for w in tokens]
+    return " ".join(tokens)
+
+df["clean"] = df["message"].apply(preprocess)
 ```
 
 This generates numerical feature vectors using:
@@ -76,58 +80,62 @@ This generates numerical feature vectors using:
 Unigrams
 Bigrams
 
-3. Model Training
+3. Feature Extraction (CountVectorizer)
 
-Pipeline
+Using unigrams + bigrams and filtering overly common terms:
+
 ```python
-pipeline = Pipeline([
-    ("vectorizer", vectorizer),
-    ("classifier", MultinomialNB())
-])
+CountVectorizer(
+    ngram_range=(1, 2),
+    max_df=0.9
+)
+
 ```
 
-Hyperparameter tuning:
+4. Labels Conversion
+
+Spam → 1
+Ham → 0
 
 ```python
+y = df["label"].apply(lambda x: 1 if x == "spam" else 0)
+X = df["clean"]
+```
+
+
+5. Model Training (Pipeline + GridSearchCV)
+   
+```python
+pipeline = Pipeline([
+    ("vectorizer", CountVectorizer(ngram_range=(1,2), max_df=0.9)),
+    ("classifier", MultinomialNB())
+])
+
 param_grid = {
-    "classifier__alpha": [0.01, 0.1, 0.2, 0.25, 0.5, 0.75, 1.0]
+    "classifier__alpha": [0.01, 0.1, 0.2, 0.5, 1.0]
 }
 
-grid_search = GridSearchCV(
+grid = GridSearchCV(
     pipeline,
     param_grid,
     cv=5,
     scoring="f1"
 )
 
-grid_search.fit(df["message"], y)
-best_model = grid_search.best_estimator_
-```
+grid.fit(X, y)
+best_model = grid.best_estimator_
 
-4. Saving the Model
-```python
-import joblib
-joblib.dump(best_model, "spam_model.joblib")
-```
 Reloading later:
 
 ```python
 model = joblib.load("spam_model.joblib")
 ```
 
-5. Running Predictions
+6. Save the Final Model
 
 ```python
-msg = ["Congratulations! You won a FREE prize! Click now!"]
-prediction = model.predict(msg)
-probabilities = model.predict_proba(msg)
-```
-Example output:
-
-```python
-Prediction: spam
-Spam Probability: 1.00
-Ham Probability: 0.00
+import joblib
+joblib.dump(best_model, "spam_model.joblib")
 ```
 
 ##  Dataset
