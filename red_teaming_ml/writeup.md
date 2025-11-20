@@ -66,7 +66,7 @@ head -n 101 train.csv > poison-student.csv
 
 Then we manipulated the labels inside poison-student.csv:
 
-- Changed many legitimate ham → spam (using 'Find/Replace'
+- Changed many legitimate ham → spam (using 'Find/Replace')
 
 - Added misleading spam labels to benign messages
 
