@@ -35,13 +35,13 @@ All network records are mapped into **five classes**:
 
 The notebook performs full data preparation:
 
-- ✔ Loaded and inspected NSL-KDD dataset  
-- ✔ Created **binary** and **multi-class** labels  
-- ✔ One-hot encoded categorical features  
+-  Loaded and inspected NSL-KDD dataset  
+-  Created **binary** and **multi-class** labels  
+-  One-hot encoded categorical features  
   - `protocol_type`
   - `service`
-- ✔ Selected numerical behavioral features  
-- ✔ Combined encoded + numerical features into a training matrix  
+-  Selected numerical behavioral features  
+-  Combined encoded + numerical features into a training matrix  
 
 ---
 
