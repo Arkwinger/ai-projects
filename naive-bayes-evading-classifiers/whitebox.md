@@ -203,16 +203,16 @@ python3 faze1.py
 Output: 
 
 ```text
-Attacking review bb_0... Done (22 words, 73 queries total)
-Attacking review bb_1... Done (40 words, 164 queries total)
-Attacking review bb_2... Done (20 words, 235 queries total)
-Attacking review bb_3... Done (17 words, 303 queries total)
-Attacking review bb_4... Done (4 words, 358 queries total)
-Attacking review bb_5... Done (38 words, 447 queries total)
-Attacking review bb_6... Done (40 words, 538 queries total)
-Attacking review bb_7... Done (4 words, 593 queries total)
-Attacking review bb_8... Done (13 words, 657 queries total)
-Attacking review bb_9... Done (6 words, 714 queries total)
+Attacking review wb_0... Done (6 words)
+Attacking review wb_1... Done (3 words)
+Attacking review wb_2... Done (3 words)
+Attacking review wb_3... Done (4 words)
+Attacking review wb_4... Done (6 words)
+Attacking review wb_5... Done (11 words)
+Attacking review wb_6... Done (5 words)
+Attacking review wb_7... Done (4 words)
+Attacking review wb_8... Done (24 words)
+Attacking review wb_9... Done (7 words)
 ```
 
 ## Conceptual Explanation
