@@ -1,4 +1,8 @@
-##  Phase 2 — Black-Box Attack
+#  Blackbox GoodWords Attack — Naive Bayes Inference-Time Evasion 
+
+This repository documents a complete **inference-time evasion attack** against a Naive Bayes text classifier using the classic **GoodWords attack** technique.
+
+Both **white-box** and **black-box** threat models are demonstrated, following the exact execution flow used during the assessment, from environment setup to successful flag retrieval.
 
 ### Overview
 
