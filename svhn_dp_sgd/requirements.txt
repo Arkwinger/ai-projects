@@ -1,0 +1,7 @@
+torch
+torchvision
+opacus==1.4.0
+safetensors
+numpy
+scipy
+opt_einsum
