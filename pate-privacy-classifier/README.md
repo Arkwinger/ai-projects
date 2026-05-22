@@ -96,3 +96,12 @@ The final student model successfully satisfied both privacy and accuracy require
   "passed": true
 }
 ```
+
+
+
+
+
+
+ex:
+
+<img width="770" height="215" alt="image" src="https://github.com/user-attachments/assets/99668737-3a07-4de4-8403-bfd945c5bfbc" />
