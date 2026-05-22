@@ -101,6 +101,49 @@ Normalize((0.2860,), (0.3530,))
 
 The final model successfully resisted the standardized Membership Inference Attack evaluation.
 
+# How to Run
+
+## Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Run the Training Script
+
+```bash
+python fashion_defense.py
+```
+
+This will:
+- Download the Fashion-MNIST dataset
+- Train the defended CNN model
+- Apply privacy-preserving regularization techniques
+- Export the final model as:
+
+```text
+defended_model.safetensors
+```
+
+---
+
+## Submit the Model
+
+Set the challenge server URL:
+
+```bash
+export BASE_URL="http://<ip>:<port>"
+```
+
+Submit the trained model:
+
+```bash
+curl -s -X POST "$BASE_URL/submit" \
+  -F "defended_model=@defended_model.safetensors" | jq
+```
+
 ---
 
 # Skills Demonstrated
