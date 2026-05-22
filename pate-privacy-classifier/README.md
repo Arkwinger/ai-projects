@@ -75,6 +75,52 @@ The final student model successfully satisfied both privacy and accuracy require
 
 ---
 
+# How to Run
+
+## Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Run the Training Script
+
+```bash
+python pate_emnist.py
+```
+
+This will:
+- Download the EMNIST Letters dataset
+- Train teacher models
+- Generate noisy aggregated labels
+- Train the student model
+- Export the final model as:
+
+```text
+pate_student.safetensors
+```
+
+---
+
+## Validate the Model
+
+Set the challenge server URL:
+
+```bash
+export BASE_URL="http://<ip>:<port>"
+```
+
+Submit the trained model:
+
+```bash
+curl -s -X POST "$BASE_URL/validate" \
+  -F "model=@pate_student.safetensors" | jq
+```
+
+
+
 # Skills Demonstrated
 
 - Differential Privacy
