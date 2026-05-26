@@ -1,4 +1,4 @@
-# FGSM Adversarial Solver (HTB Academy)
+# FGSM Adversarial Solver 
 
 This project contains a white-box FGSM adversarial attack solver
 used for the Hack The Box Academy AI Evasion module.
