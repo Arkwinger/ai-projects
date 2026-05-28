@@ -81,6 +81,12 @@ python3 jsma_solver.py
 
 ---
 
+## Example Attack Result
+
+The attack successfully forced the classifier to misclassify the original digit `1` as target class `7` while modifying only 6 pixels under the allowed L0 budget.
+
+<img width="1348" height="531" alt="jsma_success" src="https://github.com/user-attachments/assets/b7ce0c12-5d59-4f7f-85da-6d741aa2981f" />
+
 ## Methodology
 
 The attack reconstructs the target classifier locally in order to compute Jacobian gradients and saliency maps directly against the neural network.
