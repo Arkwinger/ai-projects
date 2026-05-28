@@ -1,125 +1,143 @@
 # Methodology
 
-## Objective
+## Research Objective
 
-The goal of this project was to implement and analyze the Jacobian-based Saliency Map Attack (JSMA) against an MNIST image classifier under strict sparse perturbation constraints.
+The objective of this research was to examine the effectiveness of sparse adversarial perturbations against convolutional neural networks using the Jacobian-based Saliency Map Attack (JSMA). The project focused on generating targeted adversarial examples capable of forcing controlled misclassification while operating under strict L0 perturbation constraints.
 
-The attack focused on generating targeted adversarial examples by modifying only a limited number of strategically selected pixels while forcing the classifier to predict a chosen target class.
+Unlike broad perturbation attacks that distribute noise across an entire image, JSMA prioritizes highly selective feature manipulation by modifying only a limited number of strategically chosen pixels.
 
 ---
 
-## Environment Setup
+## Experimental Environment
 
-A dedicated Python virtual environment was created to isolate dependencies required for the attack implementation.
+A controlled Python environment was established to isolate all required dependencies and ensure reproducibility of the attack workflow.
 
-Required libraries included:
+The implementation utilized:
 
+* Python
 * PyTorch
 * NumPy
-* Requests
 * Pillow
-* Torchvision
+* Requests
 
-The pretrained classifier weights were retrieved directly from the challenge server and loaded locally to enable gradient computation and saliency analysis.
+A virtual environment was used to maintain dependency consistency throughout testing and experimentation.
 
 ---
 
-## Model Reconstruction
+## Target Model Reconstruction
 
-The server-side classifier architecture was recreated locally using PyTorch.
+The target classifier architecture was reconstructed locally using a LeNet-5 inspired convolutional neural network architecture provided by the challenge environment.
 
-The model followed a LeNet-5 style convolutional neural network architecture consisting of:
+The reconstructed model consisted of:
 
-* Convolutional layers
-* Average pooling layers
-* Fully connected layers
+* Convolutional feature extraction layers
+* Average pooling operations
+* Fully connected classification layers
 * Tanh activation functions
 * Log-softmax output layer
 
-Recreating the model locally allowed direct computation of Jacobian gradients required for JSMA.
+Rebuilding the model locally enabled direct access to forward and backward propagation operations necessary for Jacobian gradient analysis.
 
 ---
 
-## Challenge Acquisition
+## Challenge Acquisition and Data Preparation
 
-The challenge image and attack parameters were retrieved from the API endpoint.
+Challenge samples were retrieved from the API interface provided by the environment.
 
-The challenge provided:
+Each challenge supplied:
 
-* Original image
-* Ground-truth label
-* Target misclassification class
+* A baseline MNIST image
+* Ground-truth classification label
+* Required target class
 * Maximum allowed L0 perturbation budget
-* Maximum L2 constraint
+* Maximum L2 constraint threshold
 
-The image was decoded from a base64 PNG representation into normalized pixel space.
-
----
-
-## Jacobian Gradient Computation
-
-Gradients were computed with respect to the target class output.
-
-The attack calculated which pixels most strongly increased the target class score while minimizing influence on competing classes.
-
-This produced a saliency ranking used to prioritize pixel modifications.
+The supplied image was decoded from a base64 PNG representation and converted into normalized tensor space for gradient computation and adversarial manipulation.
 
 ---
 
-## Sparse Pixel Perturbation
+## Jacobian Gradient Analysis
 
-Pixels were iteratively modified according to saliency ranking.
+The attack relied on Jacobian-based saliency analysis to identify features most influential toward the target misclassification objective.
 
-For each iteration:
+Gradients were computed with respect to the target class output, allowing the attack to measure how individual pixel perturbations influenced classifier confidence.
 
-1. Gradients were recomputed
+This process enabled construction of a saliency ranking that prioritized pixels capable of:
+
+* Increasing target class activation
+* Reducing competing class influence
+* Maximizing adversarial effectiveness under sparse constraints
+
+The resulting saliency map functioned as a feature importance distribution used to guide perturbation selection.
+
+---
+
+## Sparse Perturbation Strategy
+
+Adversarial perturbations were introduced iteratively according to saliency ranking.
+
+At each iteration:
+
+1. The Jacobian matrix was recomputed
 2. The most influential unmodified pixel was selected
-3. The pixel value was adjusted
+3. Pixel intensity was modified within valid bounds
 4. The classifier prediction was reevaluated
 
-The process continued until either:
+This iterative process continued until either:
 
-* The classifier predicted the target class
+* The classifier predicted the required target class
 * The perturbation budget was exhausted
 
-All pixel values were constrained to remain within the valid range of [0,1].
+All perturbations were constrained to valid image-space values within the range [0,1].
 
 ---
 
-## Constraint Validation
+## Constraint Enforcement
 
-The attack monitored:
+The implementation continuously monitored perturbation metrics throughout attack execution.
 
-* L0 norm (number of modified pixels)
-* L2 distance between original and adversarial image
+The primary constraint enforced was the L0 norm:
 
-This ensured the generated adversarial example satisfied server-side validation requirements.
+|x_{adv}-x|_0 \leq budget
 
----
+This constrained the maximum number of modified pixels permitted during adversarial generation.
 
-## Submission and Verification
-
-The final adversarial image was encoded back into PNG format and submitted to the challenge API.
-
-Successful submissions required:
-
-* Prediction equal to target class
-* L0 perturbation count within allowed budget
-* L2 distance below threshold
-* Valid image formatting
-
-Upon successful validation, the server returned the challenge flag.
+Additional monitoring of L2 distance ensured perturbations remained within challenge validation thresholds and prevented complete image replacement attacks.
 
 ---
 
-## Research Focus
+## Adversarial Evaluation
 
-This project explored practical adversarial machine learning concepts including:
+Generated adversarial examples were evaluated against the locally reconstructed model prior to submission.
 
-* Sparse adversarial perturbations
-* Saliency-based feature selection
-* Jacobian analysis
-* Targeted adversarial attacks
-* Neural network sensitivity to feature manipulation
+Evaluation metrics included:
 
-The implementation demonstrated how small, highly strategic modifications can significantly alter neural network predictions while maintaining minimal overall visual distortion.
+* Predicted class
+* Number of modified pixels
+* L2 perturbation magnitude
+* Overall perturbation sparsity
+
+The adversarial image was then re-encoded into PNG format and submitted to the validation endpoint.
+
+Successful attacks required:
+
+* Exact target-class misclassification
+* Compliance with L0 perturbation budget
+* Compliance with L2 threshold restrictions
+* Preservation of valid image formatting
+
+---
+
+## Research Findings
+
+The research demonstrated that convolutional neural networks remain vulnerable to highly sparse, gradient-guided perturbations despite modifying only a limited subset of input features.
+
+The implementation highlighted several important adversarial machine learning concepts:
+
+* Neural network sensitivity to localized feature manipulation
+* Effectiveness of Jacobian saliency analysis
+* Sparse perturbation optimization
+* Targeted adversarial misclassification
+* Feature importance exploitation within deep learning systems
+
+The project further reinforced how adversarial attacks can exploit nonlinear feature dependencies to alter model predictions while maintaining relatively low overall visual distortion.
