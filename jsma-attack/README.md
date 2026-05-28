@@ -4,7 +4,7 @@ Implementation and analysis of the Jacobian-based Saliency Map Attack (JSMA) aga
 
 ## Overview
 
-This project explores sparse adversarial machine learning attacks through targeted pixel manipulation using Jacobian saliency analysis.
+Explores sparse adversarial machine learning attacks through targeted pixel manipulation using Jacobian saliency analysis.
 
 The implementation focuses on generating adversarial examples capable of forcing controlled misclassification while operating under strict L0 perturbation constraints.
 
@@ -101,7 +101,7 @@ The workflow includes:
 
 ## Research Focus
 
-This project examines how sparse, highly targeted perturbations can significantly alter neural network predictions while minimizing total feature modification.
+This research examines how sparse, highly targeted perturbations can significantly alter neural network predictions while minimizing total feature modification.
 
 The implementation demonstrates practical adversarial attack development against image classification systems and explores:
 
