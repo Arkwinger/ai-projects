@@ -104,10 +104,6 @@ elasticnet-adversarial-attack/
 ├── README.md
 ├── requirements.txt
 ├── elasticnet_solver.py
-├── images/
-│   ├── perturbation_visualization.png
-│   ├── sparsity_heatmap.png
-│   └── distortion_analysis.png
 ├── notebooks/
 │   └── elasticnet_analysis.ipynb
 └── docs/
