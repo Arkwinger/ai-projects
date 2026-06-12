@@ -17,7 +17,15 @@
 
             <img src="{{ url_for('static', filename='logo.png') }}">
 
-            <span>SynAccel</span>
+            <div>
+
+                <span>SynAccel Assistant</span>
+
+                <div style="font-size:13px;color:#666;margin-top:4px;">
+                    Enterprise Knowledge Platform
+                </div>
+
+            </div>
 
         </div>
 
@@ -28,61 +36,17 @@
         <div class="hero">
 
             <p class="eyebrow">
-                ADVERSARIAL AI / AUTONOMOUS DEFENSE
+                AI-POWERED KNOWLEDGE RETRIEVAL
             </p>
 
             <h1>
-                SynAccel<br>
-                Assistant.
+                Internal Documentation Assistant
             </h1>
 
             <p class="description">
-                Ask questions about company knowledge,
-                policies, procedures, security, or
-                general topics.
+                Search company policies, procedures, security documentation,
+                standards, and operational knowledge through a single AI-powered interface.
             </p>
-
-        </div>
-
-        <div class="knowledge-base">
-
-            <h3>Knowledge Base</h3>
-
-            <p class="doc-count">
-                {{ document_count }} document(s) loaded
-            </p>
-
-            {% for doc in document_names %}
-
-                <div class="doc-item">
-                    {{ doc }}
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-        <div class="chat-window">
-
-            {% for msg in chat_history %}
-
-                {% if msg.role == "user" %}
-
-                    <div class="message user-bubble">
-                        <strong>You</strong>
-                        <p>{{ msg.content }}</p>
-                    </div>
-
-                {% else %}
-
-                    <div class="message assistant-bubble">
-                        <strong>Assistant</strong>
-                        <p>{{ msg.content }}</p>
-                    </div>
-
-                {% endif %}
-
-            {% endfor %}
 
         </div>
 
@@ -91,31 +55,104 @@
             <input
                 type="text"
                 name="question"
-                placeholder="Ask the assistant..."
+                placeholder="Ask a question about company documentation..."
                 required>
 
             <button type="submit">
-                Send
+                Search
             </button>
 
         </form>
 
-        <form method="POST"
-              action="/upload"
-              enctype="multipart/form-data"
-              class="upload-form">
+        <div class="chat-window">
 
-            <input type="file" name="file" required>
+            {% for msg in chat_history %}
 
-            <button type="submit">
-                Upload Document
-            </button>
+                {% if msg.role == "user" %}
 
-        </form>
+                    <div class="message user-bubble">
+
+                        <strong>You</strong>
+
+                        <p>{{ msg.content }}</p>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="message assistant-bubble">
+
+                        <strong>SynAccel Assistant</strong>
+
+                        <p>{{ msg.content }}</p>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+        <div class="knowledge-base">
+
+            <h3>Knowledge Base</h3>
+
+            <p class="doc-count">
+                {{ document_count }} document(s) indexed
+            </p>
+
+            {% if admin_mode %}
+
+            <form method="POST"
+                  action="/upload"
+                  enctype="multipart/form-data"
+                  class="upload-form">
+
+                <input type="file" name="file" required>
+
+                <button type="submit">
+                    Upload Document
+                </button>
+
+            </form>
+
+            {% endif %}
+
+            {% for doc in document_names %}
+
+                <div class="doc-row">
+
+                    <div class="doc-item">
+                        📄 {{ doc }}
+                    </div>
+
+                    {% if admin_mode %}
+
+                    <form method="POST"
+                          action="/delete/{{ doc }}">
+
+                        <button
+                            type="submit"
+                            class="delete-btn">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
 
         <div class="footer">
 
-            SynAccel Assistant • Vector Search Enabled
+            SynAccel Assistant • Retrieval-Augmented Generation (RAG) • ChromaDB • Ollama
 
         </div>
 
