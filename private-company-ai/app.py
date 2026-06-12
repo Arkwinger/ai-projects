@@ -1,58 +1,20 @@
 from flask import Flask, render_template, request, redirect
 from pathlib import Path
-from pypdf import PdfReader
 from ollama import chat
+
+from retrieval import (
+    load_documents,
+    search_documents
+)
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = Path("docs")
 UPLOAD_FOLDER.mkdir(exist_ok=True)
 
-documents = {}
 chat_history = []
 
-
-def load_documents():
-
-    docs = {}
-
-    for file in UPLOAD_FOLDER.iterdir():
-
-        content = ""
-
-        if file.suffix.lower() == ".pdf":
-
-            try:
-
-                reader = PdfReader(file)
-
-                for page in reader.pages:
-
-                    text = page.extract_text()
-
-                    if text:
-                        content += text + "\n"
-
-            except Exception:
-                continue
-
-        elif file.suffix.lower() == ".txt":
-
-            try:
-
-                with open(file, "r", encoding="utf-8") as f:
-                    content = f.read()
-
-            except Exception:
-                continue
-
-        docs[file.name] = content
-
-    return docs
-
-
-documents = load_documents()
-
+load_documents()
 
 SYSTEM_PROMPT = """
 You are SynAccel Assistant.
@@ -66,20 +28,18 @@ Your role is to help employees with:
 - Security questions
 - General questions
 
-If company documentation is provided, use it.
+Use company documentation whenever relevant.
 
-If company documentation is not relevant, answer normally.
+If the documentation does not contain the answer,
+say so clearly.
 
 Be conversational and approachable.
-
-Do not constantly mention documents unless they are actually relevant.
 """
 
 
 @app.route("/", methods=["GET", "POST"])
 def home():
 
-    global documents
     global chat_history
 
     answer = None
@@ -92,23 +52,25 @@ def home():
 
         if question:
 
-            best_doc = None
-            best_score = 0
+            results = search_documents(question)
 
-            question_words = question.lower().split()
+            context = ""
 
-            for filename, content in documents.items():
+            sources = set()
 
-                score = 0
+            if results and results["documents"]:
 
-                for word in question_words:
+                for doc_group, meta_group in zip(
+                    results["documents"],
+                    results["metadatas"]
+                ):
 
-                    if len(word) > 3 and word in content.lower():
-                        score += 1
+                    for doc, meta in zip(doc_group, meta_group):
 
-                if score > best_score:
-                    best_score = score
-                    best_doc = filename
+                        context += doc + "\n\n"
+
+                        if meta and "source" in meta:
+                            sources.add(meta["source"])
 
             messages = [
                 {
@@ -119,38 +81,20 @@ def home():
 
             messages.extend(chat_history[-4:])
 
-            if best_doc and best_score >= 3:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"""
+Use the following company documentation to answer the question.
 
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": f"""
-Use this document if it is helpful.
-
-DOCUMENT NAME:
-{best_doc}
-
-DOCUMENT:
-{documents[best_doc][:2000]}
+DOCUMENTATION:
+{context}
 
 QUESTION:
 {question}
 """
-                    }
-                )
-
-                source = best_doc
-
-            else:
-
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": question
-                    }
-                )
-
-                source = "General Assistant"
+                }
+            )
 
             response = chat(
                 model="qwen3",
@@ -158,6 +102,11 @@ QUESTION:
             )
 
             answer = response.message.content
+
+            if sources:
+                source = ", ".join(sorted(sources))
+            else:
+                source = "No source found"
 
             chat_history.append(
                 {
@@ -173,21 +122,24 @@ QUESTION:
                 }
             )
 
+    document_names = []
+
+    for file in UPLOAD_FOLDER.iterdir():
+        document_names.append(file.name)
+
     return render_template(
         "index.html",
         answer=answer,
         source=source,
         question=question,
-        document_count=len(documents),
-        document_names=documents.keys(),
+        document_count=len(document_names),
+        document_names=document_names,
         chat_history=chat_history
     )
 
 
 @app.route("/upload", methods=["POST"])
 def upload():
-
-    global documents
 
     uploaded_file = request.files.get("file")
 
@@ -197,7 +149,7 @@ def upload():
 
         uploaded_file.save(save_path)
 
-        documents = load_documents()
+        load_documents()
 
     return redirect("/")
 
