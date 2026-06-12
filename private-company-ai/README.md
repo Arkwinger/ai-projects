@@ -129,4 +129,15 @@ Future development will focus on:
 
 ---
 
+## New Features
+
+- Semantic document search using Sentence Transformers
+- ChromaDB vector database integration
+- PDF and TXT document ingestion
+- Dynamic document uploads
+- Document removal and re-indexing
+- Retrieval-Augmented Generation (RAG)
+- Local LLM support through Ollama
+- Enterprise knowledge assistant interface
+
 
