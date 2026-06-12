@@ -1,95 +1,132 @@
-# Private Company AI
+# SynAccel Assistant
 
-Private Company AI is a local AI knowledge platform designed for organizations that want to interact with internal documents using a self-hosted large language model (LLM).
+SynAccel Assistant is a local AI knowledge assistant designed for internal company environments.
 
-The project currently uses Ollama and Qwen to answer questions about uploaded documents while keeping all processing local to the user's environment.
+The platform combines a self-hosted large language model (LLM) with internal documentation to provide employees with a conversational assistant capable of answering both general questions and organization-specific questions.
+
+All processing occurs locally through Ollama, allowing organizations to explore AI-assisted knowledge management without sending sensitive data to external providers.
+
+---
 
 ## Current Features
 
-Current Features:
-- Local LLM via Ollama
-- PDF and text document ingestion
-- Multi-document support
-- Basic document retrieval
-- Source citations
-- Question answering
+* Local LLM powered by Ollama
+* Qwen integration
+* PDF document ingestion
+* Text document ingestion
+* Conversational assistant interface
+* Conversation memory
+* Multi-document knowledge base
+* Basic document retrieval
+* Source attribution
+* SynAccel-branded web interface
+* Local-first architecture
+
+---
+
+## Example Use Cases
+
+* Employee onboarding assistance
+* Internal policy lookup
+* Security documentation support
+* Procedure and workflow guidance
+* Knowledge management
+* Internal research assistant
+* Cybersecurity reference assistant
+
+---
 
 ## Current Workflow
 
 ```text
-Documents
-    ↓
-Document Retrieval
-    ↓
-Qwen (Local LLM)
-    ↓
-Answer
+User Question
+      ↓
+SynAccel Assistant
+      ↓
+Conversation Context
+      ↓
+Document Retrieval (if relevant)
+      ↓
+Qwen via Ollama
+      ↓
+Response
 ```
 
-## Current Status
+---
 
-This project is in the early prototype stage.
+## Project Structure
 
-The current implementation can:
+```text
+private-company-ai/
+│
+├── app.py
+├── chat.py
+├── requirements.txt
+│
+├── docs/
+│   ├── handbook.txt
+│   ├── it_policy.txt
+│   └── company_documents.pdf
+│
+├── templates/
+│   └── index.html
+│
+├── static/
+│   ├── style.css
+│   └── logo.png
+│
+└── screenshots/
+```
 
-- Load PDF and text documents
-- Extract document contents
-- Retrieve relevant documents based on user questions
-- Generate answers using a locally hosted LLM
-
-## Roadmap
-
-### Next Milestones
-
-- Source citations
-- Improved document retrieval
-- Support for larger document collections
-- Web-based interface
-
-### Security Features
-
-- Role-based access controls
-- Prompt injection testing
-- AI security assessment engine
-- Audit logging
-
-## Long-Term Goal
-
-Build a secure enterprise knowledge platform that allows organizations to query internal documentation using local AI models while maintaining privacy, security, and control over company data.
+---
 
 ## Technology Stack
 
-- Python
-- Ollama
-- Qwen
-- PyPDF
+* Python
+* Flask
+* Ollama
+* Qwen
+* PyPDF
+* HTML
+* CSS
 
-## Getting Started
+---
 
-### Requirements
+## Why Local AI?
 
-- Python 3.14+
-- Ollama
-- Qwen model installed locally
+Many organizations are interested in AI-assisted knowledge management but cannot upload sensitive internal documents to third-party cloud services.
 
-### Installation
+This project explores a local-first approach where:
 
-```bash
-pip install -r requirements.txt
-```
+* Internal documents remain on company systems
+* AI inference occurs locally through Ollama
+* Knowledge retrieval is performed without external APIs
+* Organizations maintain control of their data
 
-### Run
+---
 
-```bash
-python chat.py
-```
+## Current Status
 
-### Example Questions
+Research Prototype
 
-```text
-How many vacation days do employees receive?
+The current version supports:
 
-Who handles password resets?
+* Conversational interactions
+* Context retention
+* Local inference
+* Document-aware responses
+* Internal knowledge retrieval
 
-What are the six core functions of the NIST Cybersecurity Framework?
-```
+Future development will focus on:
+
+* Semantic retrieval
+* Streaming responses
+* Role-based access controls
+* Prompt injection testing
+* AI security assessments
+* Audit logging
+* Enterprise deployment options
+
+---
+
+
