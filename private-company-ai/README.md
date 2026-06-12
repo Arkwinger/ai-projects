@@ -6,11 +6,13 @@ The project currently uses Ollama and Qwen to answer questions about uploaded do
 
 ## Current Features
 
-- Local LLM integration via Ollama
-- PDF document ingestion
+Current Features:
+- Local LLM via Ollama
+- PDF and text document ingestion
 - Multi-document support
 - Basic document retrieval
-- Natural language question answering
+- Source citations
+- Question answering
 
 ## Current Workflow
 
