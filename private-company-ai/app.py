@@ -14,26 +14,28 @@ UPLOAD_FOLDER.mkdir(exist_ok=True)
 
 chat_history = []
 
+# Toggle this to False for normal users
+ADMIN_MODE = True
+
 load_documents()
 
 SYSTEM_PROMPT = """
 You are SynAccel Assistant.
 
-You are a professional but friendly AI assistant.
+Provide professional, business-friendly answers.
 
-Your role is to help employees with:
-- Company policies
-- Procedures
-- Documentation
-- Security questions
-- General questions
-
-Use company documentation whenever relevant.
-
-If the documentation does not contain the answer,
-say so clearly.
-
-Be conversational and approachable.
+Rules:
+- Use company documentation whenever possible.
+- Be clear and direct.
+- Match the length of the answer to the question.
+- Short questions should receive concise answers.
+- Complex questions can receive detailed answers.
+- Prefer bullet points when listing information.
+- Avoid unnecessary disclaimers.
+- Avoid filler phrases.
+- Do not use emojis.
+- If information cannot be found, say:
+  'I could not find that information in the available documents.'
 """
 
 
@@ -134,7 +136,8 @@ QUESTION:
         question=question,
         document_count=len(document_names),
         document_names=document_names,
-        chat_history=chat_history
+        chat_history=chat_history,
+        admin_mode=ADMIN_MODE
     )
 
 
@@ -148,6 +151,20 @@ def upload():
         save_path = UPLOAD_FOLDER / uploaded_file.filename
 
         uploaded_file.save(save_path)
+
+        load_documents()
+
+    return redirect("/")
+
+
+@app.route("/delete/<filename>", methods=["POST"])
+def delete_document(filename):
+
+    file_path = UPLOAD_FOLDER / filename
+
+    if file_path.exists():
+
+        file_path.unlink()
 
         load_documents()
 
