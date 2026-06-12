@@ -44,6 +44,24 @@
 
         </div>
 
+        <div class="knowledge-base">
+
+            <h3>Knowledge Base</h3>
+
+            <p class="doc-count">
+                {{ document_count }} document(s) loaded
+            </p>
+
+            {% for doc in document_names %}
+
+                <div class="doc-item">
+                    {{ doc }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
         <div class="chat-window">
 
             {% for msg in chat_history %}
@@ -82,10 +100,22 @@
 
         </form>
 
+        <form method="POST"
+              action="/upload"
+              enctype="multipart/form-data"
+              class="upload-form">
+
+            <input type="file" name="file" required>
+
+            <button type="submit">
+                Upload Document
+            </button>
+
+        </form>
+
         <div class="footer">
 
-            Connected Knowledge Sources:
-            {{ document_count }}
+            SynAccel Assistant • Vector Search Enabled
 
         </div>
 
