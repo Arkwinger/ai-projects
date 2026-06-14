@@ -1,107 +1,116 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <title>SynAccel Assistant</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+```
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+```
+
 </head>
 
 <body>
 
 <div class="page">
 
-    <header>
+```
+<header>
 
-        <div class="logo-area">
+    <div class="logo-area">
 
-            <img src="{{ url_for('static', filename='logo.png') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}">
 
-            <div>
+        <div>
 
-                <span>SynAccel Assistant</span>
+            <span>SynAccel Assistant</span>
 
-                <div style="font-size:13px;color:#666;margin-top:4px;">
-                    Enterprise Knowledge Platform
-                </div>
-
+            <div style="font-size:13px;color:#666;margin-top:4px;">
+                Enterprise Knowledge Platform
             </div>
 
         </div>
 
-    </header>
+    </div>
 
-    <main>
+</header>
 
-        <div class="chat-window">
+<main>
 
-            {% if chat_history|length == 0 %}
+    <div class="chat-window">
+
+        {% if chat_history|length == 0 %}
+
+            <div class="message assistant-bubble">
+
+                <strong>SynAccel Assistant</strong>
+
+                <div class="message-content">
+                    Hello. How can I help you today?
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        {% for msg in chat_history %}
+
+            {% if msg.role == "user" %}
+
+                <div class="message user-bubble">
+
+                    <strong>You</strong>
+
+                    <div class="message-content">
+                        {{ msg.content }}
+                    </div>
+
+                </div>
+
+            {% else %}
 
                 <div class="message assistant-bubble">
 
                     <strong>SynAccel Assistant</strong>
 
-                    <p>
-                        Hello. How can I help you today?
-                    </p>
+                    <div class="message-content">
+                        {{ msg.content | replace('\n', '<br>') | safe }}
+                    </div>
 
                 </div>
 
             {% endif %}
 
-            {% for msg in chat_history %}
+        {% endfor %}
 
-                {% if msg.role == "user" %}
+    </div>
 
-                    <div class="message user-bubble">
+    <form method="POST" class="search-form">
 
-                        <strong>You</strong>
+        <input
+            type="text"
+            name="question"
+            placeholder="Ask SynAccel Assistant..."
+            required
+            autocomplete="off">
 
-                        <p>{{ msg.content }}</p>
+        <button type="submit">
+            Send
+        </button>
 
-                    </div>
+    </form>
 
-                {% else %}
+    <div class="footer">
 
-                    <div class="message assistant-bubble">
+        SynAccel Assistant • Retrieval-Augmented Generation • ChromaDB • Ollama
 
-                        <strong>SynAccel Assistant</strong>
+    </div>
 
-                        <p>{{ msg.content }}</p>
-
-                    </div>
-
-                {% endif %}
-
-            {% endfor %}
-
-        </div>
-
-        <form method="POST" class="search-form">
-
-            <input
-                type="text"
-                name="question"
-                placeholder="Ask SynAccel Assistant..."
-                required
-                autocomplete="off">
-
-            <button type="submit">
-                Send
-            </button>
-
-        </form>
-
-        <div class="footer">
-
-            SynAccel Assistant • Retrieval-Augmented Generation • ChromaDB • Ollama
-
-        </div>
-
-    </main>
+</main>
+```
 
 </div>
 
 </body>
 </html>
-
