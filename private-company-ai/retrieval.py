@@ -67,10 +67,14 @@ def load_documents():
         if not content.strip():
             continue
 
-        chunks = [
-            content[i:i + 1000]
-            for i in range(0, len(content), 1000)
-        ]
+        # Better chunking with overlap
+        chunk_size = 1000
+        overlap = 200
+
+        chunks = []
+
+        for i in range(0, len(content), chunk_size - overlap):
+            chunks.append(content[i:i + chunk_size])
 
         for chunk in chunks:
 
@@ -98,7 +102,47 @@ def search_documents(query):
 
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=3
+        n_results=3,
+        include=[
+            "documents",
+            "metadatas",
+            "distances"
+        ]
     )
+
+    if not results:
+        return None
+
+    if not results.get("distances"):
+        return None
+
+    try:
+
+        best_distance = results["distances"][0][0]
+
+        print(f"\nBest match distance: {best_distance}")
+
+        # More forgiving threshold
+        if best_distance > 2.0:
+
+            print("Match rejected - distance too high")
+
+            return None
+
+    except Exception:
+
+        return None
+
+    print("\n====================")
+    print("QUERY:", query)
+
+    for docs in results["documents"]:
+
+        for doc in docs:
+
+            print("\n--- MATCH ---")
+            print(doc[:500])
+
+    print("====================\n")
 
     return results
