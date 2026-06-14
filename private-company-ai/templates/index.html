@@ -33,38 +33,21 @@
 
     <main>
 
-        <div class="hero">
-
-            <p class="eyebrow">
-                AI-POWERED KNOWLEDGE RETRIEVAL
-            </p>
-
-            <h1>
-                Internal Documentation Assistant
-            </h1>
-
-            <p class="description">
-                Search company policies, procedures, security documentation,
-                standards, and operational knowledge through a single AI-powered interface.
-            </p>
-
-        </div>
-
-        <form method="POST" class="search-form">
-
-            <input
-                type="text"
-                name="question"
-                placeholder="Ask a question about company documentation..."
-                required>
-
-            <button type="submit">
-                Search
-            </button>
-
-        </form>
-
         <div class="chat-window">
+
+            {% if chat_history|length == 0 %}
+
+                <div class="message assistant-bubble">
+
+                    <strong>SynAccel Assistant</strong>
+
+                    <p>
+                        Hello. How can I help you today?
+                    </p>
+
+                </div>
+
+            {% endif %}
 
             {% for msg in chat_history %}
 
@@ -94,65 +77,24 @@
 
         </div>
 
-        <div class="knowledge-base">
+        <form method="POST" class="search-form">
 
-            <h3>Knowledge Base</h3>
+            <input
+                type="text"
+                name="question"
+                placeholder="Ask SynAccel Assistant..."
+                required
+                autocomplete="off">
 
-            <p class="doc-count">
-                {{ document_count }} document(s) indexed
-            </p>
+            <button type="submit">
+                Send
+            </button>
 
-            {% if admin_mode %}
-
-            <form method="POST"
-                  action="/upload"
-                  enctype="multipart/form-data"
-                  class="upload-form">
-
-                <input type="file" name="file" required>
-
-                <button type="submit">
-                    Upload Document
-                </button>
-
-            </form>
-
-            {% endif %}
-
-            {% for doc in document_names %}
-
-                <div class="doc-row">
-
-                    <div class="doc-item">
-                        📄 {{ doc }}
-                    </div>
-
-                    {% if admin_mode %}
-
-                    <form method="POST"
-                          action="/delete/{{ doc }}">
-
-                        <button
-                            type="submit"
-                            class="delete-btn">
-
-                            Delete
-
-                        </button>
-
-                    </form>
-
-                    {% endif %}
-
-                </div>
-
-            {% endfor %}
-
-        </div>
+        </form>
 
         <div class="footer">
 
-            SynAccel Assistant • Retrieval-Augmented Generation (RAG) • ChromaDB • Ollama
+            SynAccel Assistant • Retrieval-Augmented Generation • ChromaDB • Ollama
 
         </div>
 
@@ -162,3 +104,4 @@
 
 </body>
 </html>
+
