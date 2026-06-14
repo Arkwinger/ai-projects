@@ -3,3 +3,4 @@ pypdf
 flask
 chromadb
 sentence-transformers
+markdown
