@@ -34,8 +34,14 @@ Rules:
 - Avoid unnecessary disclaimers.
 - Avoid filler phrases.
 - Do not use emojis.
-- If information cannot be found, say:
-  'I could not find that information in the available documents.'
+
+If relevant company documentation is provided:
+- Use it as your primary source.
+- Base your answer on the documentation.
+
+If no documentation is provided:
+- Answer naturally using your own knowledge.
+- Maintain a professional tone.
 """
 
 
@@ -74,19 +80,54 @@ def home():
                         if meta and "source" in meta:
                             sources.add(meta["source"])
 
-            messages = [
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                }
-            ]
+            # No useful documentation found
+            if not context.strip():
 
-            messages.extend(chat_history[-4:])
+                response = chat(
+                    model="qwen3",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": """
+You are SynAccel Assistant.
 
-            messages.append(
-                {
-                    "role": "user",
-                    "content": f"""
+You are a professional AI assistant.
+
+You can:
+- Answer questions using company documentation.
+- Answer general cybersecurity questions.
+- Hold natural conversations.
+- Help users with technology questions.
+
+If documentation is unavailable,
+answer the user's question normally.
+"""
+                        },
+                        {
+                            "role": "user",
+                            "content": question
+                        }
+                    ]
+                )
+
+                answer = response.message.content
+                source = None
+
+            else:
+
+                messages = [
+                    {
+                        "role": "system",
+                        "content": SYSTEM_PROMPT
+                    }
+                ]
+
+                messages.extend(chat_history[-4:])
+
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"""
 Use the following company documentation to answer the question.
 
 DOCUMENTATION:
@@ -95,20 +136,20 @@ DOCUMENTATION:
 QUESTION:
 {question}
 """
-                }
-            )
+                    }
+                )
 
-            response = chat(
-                model="qwen3",
-                messages=messages
-            )
+                response = chat(
+                    model="qwen3",
+                    messages=messages
+                )
 
-            answer = response.message.content
+                answer = response.message.content
 
-            if sources:
-                source = ", ".join(sorted(sources))
-            else:
-                source = "No source found"
+                if sources:
+                    source = ", ".join(sorted(sources))
+                else:
+                    source = None
 
             chat_history.append(
                 {
@@ -123,6 +164,9 @@ QUESTION:
                     "content": answer
                 }
             )
+
+            # Keep only recent messages
+            chat_history = chat_history[-20:]
 
     document_names = []
 
