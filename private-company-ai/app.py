@@ -14,7 +14,6 @@ UPLOAD_FOLDER.mkdir(exist_ok=True)
 
 chat_history = []
 
-# Toggle this to False for normal users
 ADMIN_MODE = True
 
 load_documents()
@@ -22,26 +21,42 @@ load_documents()
 SYSTEM_PROMPT = """
 You are SynAccel Assistant.
 
-Provide professional, business-friendly answers.
+Answer using the provided company documentation.
 
 Rules:
-- Use company documentation whenever possible.
-- Be clear and direct.
-- Match the length of the answer to the question.
-- Short questions should receive concise answers.
-- Complex questions can receive detailed answers.
-- Prefer bullet points when listing information.
-- Avoid unnecessary disclaimers.
-- Avoid filler phrases.
+
+- Use the documentation as your primary source.
+- Give direct answers.
+- Be concise but helpful.
+- When listing items, use bullet points.
+- Briefly explain the answer when useful.
+- Write naturally and professionally.
 - Do not use emojis.
+- Do not make up information.
+- Do not speculate.
+- If the answer exists in the documentation, use it.
+- Do not mention that you are using documentation.
 
-If relevant company documentation is provided:
-- Use it as your primary source.
-- Base your answer on the documentation.
+If the answer cannot be found in the documentation, respond exactly with:
 
-If no documentation is provided:
-- Answer naturally using your own knowledge.
-- Maintain a professional tone.
+I could not find that information in the available documents.
+
+Example:
+
+Question:
+What are the NIST CSF Functions?
+
+Answer:
+The NIST Cybersecurity Framework (CSF) consists of six core functions:
+
+• Govern
+• Identify
+• Protect
+• Detect
+• Respond
+• Recover
+
+These functions help organizations manage cybersecurity risk and improve cybersecurity outcomes.
 """
 
 
@@ -63,10 +78,9 @@ def home():
             results = search_documents(question)
 
             context = ""
-
             sources = set()
 
-            if results and results["documents"]:
+            if results and results.get("documents"):
 
                 for doc_group, meta_group in zip(
                     results["documents"],
@@ -77,10 +91,17 @@ def home():
 
                         context += doc + "\n\n"
 
+                        print("\n===== RETRIEVED DOCUMENT =====")
+                        print(doc[:1000])
+                        print("==============================\n")
+
                         if meta and "source" in meta:
                             sources.add(meta["source"])
 
-            # No useful documentation found
+            # ==========================
+            # NORMAL CHAT MODE
+            # ==========================
+
             if not context.strip():
 
                 response = chat(
@@ -91,18 +112,19 @@ def home():
                             "content": """
 You are SynAccel Assistant.
 
-You are a professional AI assistant.
+Be conversational and concise.
 
-You can:
-- Answer questions using company documentation.
-- Answer general cybersecurity questions.
-- Hold natural conversations.
-- Help users with technology questions.
-
-If documentation is unavailable,
-answer the user's question normally.
+Rules:
+- Do not use emojis.
+- Do not introduce yourself unless asked.
+- Keep most answers under 5 sentences.
+- Respond naturally.
+- Be professional but friendly.
 """
-                        },
+                        }
+                    ]
+                    + chat_history[-6:]
+                    + [
                         {
                             "role": "user",
                             "content": question
@@ -113,22 +135,23 @@ answer the user's question normally.
                 answer = response.message.content
                 source = None
 
+            # ==========================
+            # DOCUMENT MODE
+            # ==========================
+
             else:
 
-                messages = [
-                    {
-                        "role": "system",
-                        "content": SYSTEM_PROMPT
-                    }
-                ]
-
-                messages.extend(chat_history[-4:])
-
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": f"""
-Use the following company documentation to answer the question.
+                response = chat(
+                    model="qwen3",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": SYSTEM_PROMPT
+                        },
+                        {
+                            "role": "user",
+                            "content": f"""
+Use the following documentation to answer the question.
 
 DOCUMENTATION:
 {context}
@@ -136,12 +159,8 @@ DOCUMENTATION:
 QUESTION:
 {question}
 """
-                    }
-                )
-
-                response = chat(
-                    model="qwen3",
-                    messages=messages
+                        }
+                    ]
                 )
 
                 answer = response.message.content
@@ -151,6 +170,10 @@ QUESTION:
                 else:
                     source = None
 
+            # ==========================
+            # SAVE CHAT HISTORY
+            # ==========================
+
             chat_history.append(
                 {
                     "role": "user",
@@ -158,14 +181,18 @@ QUESTION:
                 }
             )
 
+            assistant_message = answer
+
+            if source:
+                assistant_message += f"\n\nSource: {source}"
+
             chat_history.append(
                 {
                     "role": "assistant",
-                    "content": answer
+                    "content": assistant_message
                 }
             )
 
-            # Keep only recent messages
             chat_history = chat_history[-20:]
 
     document_names = []
