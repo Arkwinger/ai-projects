@@ -6,383 +6,202 @@
 }
 
 body {
-
     font-family: Inter, Arial, sans-serif;
-
     background: #f4f7fa;
-
     color: #111827;
-
     min-height: 100vh;
 }
 
 .page {
-
-    max-width: 1200px;
-
+    max-width: 1000px;
     margin: auto;
-
-    padding: 40px 30px;
+    padding: 35px 30px;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .logo-area {
-
     display: flex;
-
     align-items: center;
-
     gap: 16px;
-
     margin-bottom: 25px;
 }
 
 .logo-area img {
-
     width: 55px;
-
     height: 55px;
-
     object-fit: contain;
 }
 
 .logo-area span {
-
     font-size: 28px;
-
     font-weight: 700;
-
     letter-spacing: -0.5px;
 }
 
-.hero {
+/* =========================
+   CHAT WINDOW
+========================= */
 
+.chat-window {
     background: white;
-
     border-radius: 18px;
-
-    padding: 30px;
-
-    margin-bottom: 20px;
-
+    padding: 25px;
+    height: 70vh;
+    overflow-y: auto;
+    margin-bottom: 18px;
     border: 1px solid #e5e7eb;
-
     box-shadow: 0 10px 30px rgba(0,0,0,.04);
 }
 
-.eyebrow {
+/* =========================
+   MESSAGES
+========================= */
 
-    font-size: 11px;
-
-    letter-spacing: 3px;
-
-    color: #2563eb;
-
-    font-weight: 700;
-
-    margin-bottom: 10px;
+.message {
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 22px;
 }
 
-.hero h1 {
-
-    font-size: 36px;
-
+.message strong {
+    display: block;
     margin-bottom: 10px;
-
-    font-weight: 700;
+    font-size: 15px;
 }
 
-.description {
-
-    color: #6b7280;
-
+.message-content {
+    white-space: pre-wrap;
     line-height: 1.7;
-
-    max-width: 800px;
+    word-wrap: break-word;
 }
+
+/* =========================
+   USER MESSAGE
+========================= */
+
+.user-bubble {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #111827;
+
+    width: fit-content;
+    max-width: 80%;
+    min-width: 240px;
+
+    margin-left: auto;
+}
+
+/* =========================
+   ASSISTANT MESSAGE
+========================= */
+
+.assistant-bubble {
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    max-width: 90%;
+}
+
+/* =========================
+   INPUT AREA
+========================= */
 
 .search-form {
-
     display: flex;
-
     gap: 12px;
-
-    margin-bottom: 20px;
 }
 
 .search-form input {
-
     flex: 1;
-
     padding: 18px;
-
     border: 1px solid #d1d5db;
-
     border-radius: 12px;
-
     background: white;
-
     font-size: 15px;
-
     transition: .2s;
 }
 
 .search-form input:focus {
-
     outline: none;
-
-    border-color: #2563eb;
-
-    box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+    border-color: #111827;
+    box-shadow: 0 0 0 4px rgba(17,24,39,.08);
 }
 
 .search-form button {
-
     background: #111827;
-
     color: white;
-
     border: none;
-
     border-radius: 12px;
-
     padding: 18px 28px;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition: .2s;
 }
 
 .search-form button:hover {
-
-    transform: translateY(-1px);
+    background: #1f2937;
 }
 
-.chat-window {
-
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    min-height: 500px;
-
-    max-height: 700px;
-
-    overflow-y: auto;
-
-    margin-bottom: 20px;
-
-    border: 1px solid #e5e7eb;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,.04);
-}
-
-.message {
-
-    padding: 18px;
-
-    border-radius: 14px;
-
-    margin-bottom: 18px;
-}
-
-.message strong {
-
-    display: block;
-
-    margin-bottom: 8px;
-}
-
-.message p {
-
-    line-height: 1.8;
-}
-
-.user-bubble {
-
-    background: #eff6ff;
-
-    border-left: 4px solid #2563eb;
-
-    margin-left: 120px;
-}
-
-.assistant-bubble {
-
-    background: #f9fafb;
-
-    border-left: 4px solid #374151;
-
-    margin-right: 120px;
-}
-
-.knowledge-base {
-
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    margin-bottom: 20px;
-
-    border: 1px solid #e5e7eb;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,.04);
-}
-
-.knowledge-base h3 {
-
-    margin-bottom: 20px;
-
-    font-size: 22px;
-}
-
-.status-grid {
-
-    display: flex;
-
-    gap: 50px;
-}
-
-.status-item {
-
-    display: flex;
-
-    flex-direction: column;
-}
-
-.status-number {
-
-    font-size: 34px;
-
-    font-weight: 700;
-
-    color: #111827;
-}
-
-.status-label {
-
-    color: #6b7280;
-
-    margin-top: 5px;
-}
-
-.admin-divider {
-
-    margin: 30px 0;
-
-    border: none;
-
-    border-top: 1px solid #e5e7eb;
-}
-
-.admin-panel h4 {
-
-    margin-bottom: 20px;
-
-    color: #374151;
-}
-
-.upload-form {
-
-    display: flex;
-
-    gap: 12px;
-
-    align-items: center;
-
-    margin-bottom: 20px;
-}
-
-.upload-form button {
-
-    background: #2563eb;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 10px;
-
-    padding: 12px 18px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-.document-list {
-
-    margin-top: 20px;
-}
-
-.doc-row {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 15px;
-
-    margin-bottom: 12px;
-}
-
-.doc-item {
-
-    flex: 1;
-
-    background: #f9fafb;
-
-    border: 1px solid #e5e7eb;
-
-    padding: 14px;
-
-    border-radius: 10px;
-}
-
-.delete-btn {
-
-    background: #dc2626;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 10px;
-
-    padding: 12px 18px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-}
+/* =========================
+   FOOTER
+========================= */
 
 .footer {
-
     text-align: center;
-
     color: #6b7280;
-
     font-size: 13px;
-
     margin-top: 15px;
 }
 
-::-webkit-scrollbar {
+/* =========================
+   SCROLLBAR
+========================= */
 
+::-webkit-scrollbar {
     width: 8px;
 }
 
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
-
     background: #d1d5db;
-
     border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .page {
+        padding: 15px;
+    }
+
+    .chat-window {
+        height: 75vh;
+    }
+
+    .user-bubble,
+    .assistant-bubble {
+        max-width: 100%;
+        min-width: auto;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form button {
+        width: 100%;
+    }
 }
 ```
