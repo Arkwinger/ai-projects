@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from pathlib import Path
 from ollama import chat
+from markdown import markdown
 
 from retrieval import (
     load_documents,
@@ -28,7 +29,9 @@ Rules:
 - Use the documentation as your primary source.
 - Give direct answers.
 - Be concise but helpful.
-- When listing items, use bullet points.
+- Use markdown formatting.
+- Use markdown bullet lists with '-'.
+- Use markdown headings when appropriate.
 - Briefly explain the answer when useful.
 - Write naturally and professionally.
 - Do not use emojis.
@@ -47,16 +50,25 @@ Question:
 What are the NIST CSF Functions?
 
 Answer:
-The NIST Cybersecurity Framework (CSF) consists of six core functions:
 
-• Govern
-• Identify
-• Protect
-• Detect
-• Respond
-• Recover
+Example:
+
+Question:
+What are the NIST CSF Functions?
+
+Answer:
+
+## NIST CSF Functions
+
+* Govern: Establishes cybersecurity governance and oversight.
+* Identify: Helps organizations understand assets, risks, and business context.
+* Protect: Implements safeguards to reduce cybersecurity risk.
+* Detect: Identifies cybersecurity events and anomalies.
+* Respond: Manages cybersecurity incidents and limits impact.
+* Recover: Restores operations and improves resilience.
 
 These functions help organizations manage cybersecurity risk and improve cybersecurity outcomes.
+
 """
 
 
@@ -112,14 +124,55 @@ def home():
                             "content": """
 You are SynAccel Assistant.
 
-Be conversational and concise.
+Be conversational, concise, and professional.
 
 Rules:
-- Do not use emojis.
-- Do not introduce yourself unless asked.
-- Keep most answers under 5 sentences.
-- Respond naturally.
-- Be professional but friendly.
+
+* Do not use emojis.
+* Do not introduce yourself unless asked.
+* Keep most answers under 5 sentences unless additional detail is required.
+* Use simple markdown only.
+* Use '-' for bullet lists.
+* Use headings only when helpful.
+* Keep paragraphs compact.
+* Write complete sentences.
+* Do not over-format responses.
+* Do not use tables unless specifically requested.
+* Do not use blockquotes.
+* Do not create nested markdown unless requested.
+* Do not insert blank lines between bullet points.
+* Answer naturally.
+* Be professional and friendly.
+
+When listing concepts, functions, controls, or framework components:
+
+* Briefly explain each item.
+* Do not create bullet lists that contain only single words.
+* Prefer descriptive bullet lists over keyword-only lists.
+
+Good:
+
+NIST CSF Functions
+
+* Govern: Establishes cybersecurity governance and oversight.
+* Identify: Helps organizations understand assets, risks, and business context.
+* Protect: Implements safeguards to reduce cybersecurity risk.
+* Detect: Identifies cybersecurity events and anomalies.
+* Respond: Manages cybersecurity incidents and limits impact.
+* Recover: Restores operations and improves resilience.
+
+Bad:
+
+NIST CSF Functions
+
+* Govern
+* Identify
+* Protect
+* Detect
+* Respond
+* Recover
+
+
 """
                         }
                     ]
@@ -130,9 +183,16 @@ Rules:
                             "content": question
                         }
                     ]
+                                )
+
+                answer = markdown(
+                    response.message.content,
+                    extensions=[
+                        "fenced_code",
+                        "tables"
+                    ]
                 )
 
-                answer = response.message.content
                 source = None
 
             # ==========================
@@ -163,7 +223,13 @@ QUESTION:
                     ]
                 )
 
-                answer = response.message.content
+                answer = markdown(
+                    response.message.content,
+                    extensions=[
+                        "fenced_code",
+                        "tables"
+                    ]
+                )
 
                 if sources:
                     source = ", ".join(sorted(sources))
@@ -184,7 +250,7 @@ QUESTION:
             assistant_message = answer
 
             if source:
-                assistant_message += f"\n\nSource: {source}"
+                assistant_message += f"\n\n---\nSource: {source}"
 
             chat_history.append(
                 {
